@@ -6,16 +6,14 @@ const app = express();
 const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const morgan = require("morgan");
-const session = require('express-session'); // name of varible is different than the session name
+const session = require('express-session'); 
 
 const isSignedIn = require('./middleware/is-signed-in.js');
 const passUserToView = require('./middlewear/pass-user-to-view.js');
 
-// imports logic we made from controllers/auth.js, use them beneath middleware
 const authController = require('./controllers/auth.js');
+const authApplicationsController = require('./controllers/applications.js');
 
-
-// Set the port from environment variable or default to 3000
 const port = process.env.PORT ? process.env.PORT : "3000";
 
 
@@ -58,11 +56,8 @@ app.get("/", async (req,res) => {
 
 app.use("/auth", authController);
 //essentially a whole lot of routes (passing through the other file)
-app.use(isSignedIn);
-
-
-
-
+app.use(isSignedIn); // middleware
+app.use('/users/:userId/applications', applicationsController);
 
 
 
