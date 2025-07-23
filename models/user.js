@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const applicationsSchema = new.mongoose.Schema({
+const applicationsSchema = new mongoose.Schema({
   company: {
     type: String,
     reqired: true,
