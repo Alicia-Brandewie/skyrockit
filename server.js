@@ -8,6 +8,9 @@ const methodOverride = require("method-override");
 const morgan = require("morgan");
 const session = require('express-session'); // name of varible is different than the session name
 
+const isSignedIn = require('./middleware/is-signed-in.js');
+const passUserToView = require('./middlewear/pass-user-to-view.js');
+
 // imports logic we made from controllers/auth.js, use them beneath middleware
 const authController = require('./controllers/auth.js');
 
@@ -40,6 +43,12 @@ app.use(
   })
 );
 
+app.use(passUserToView);
+
+
+
+
+
 
 //  GET / landing page
 app.get("/", async (req,res) => {
@@ -49,7 +58,7 @@ app.get("/", async (req,res) => {
 
 app.use("/auth", authController);
 //essentially a whole lot of routes (passing through the other file)
-
+app.use(isSignedIn);
 
 
 
