@@ -9,7 +9,7 @@ const morgan = require("morgan");
 const session = require('express-session'); 
 
 const isSignedIn = require('./middleware/is-signed-in.js');
-const passUserToView = require('./middlewear/pass-user-to-view.js');
+const passUserToView = require('./middleware/pass-user-to-view.js');
 
 const authController = require('./controllers/auth.js');
 const authApplicationsController = require('./controllers/applications.js');
@@ -23,11 +23,8 @@ mongoose.connection.on("connected", () => {
   console.log(`Connected to MongoDB ${mongoose.connection.name}.`);
 });
 
-// Middleware to parse URL-encoded data from forms
 app.use(express.urlencoded({extended: false}));
-// Middleware for using HTTP verbs such as PUT or DELETE
 app.use(methodOverride("_method"));
-// Morgan for logging HTTP requests
 app.use(morgan('dev'));
 
 app.use(methodOverride("_method"));
@@ -50,15 +47,19 @@ app.use(passUserToView);
 
 //  GET / landing page
 app.get("/", async (req,res) => {
-    res.render("index.ejs", { user: req.session.user, })   
+  if (req.session.user) {
+    res.redirect(`/users/${req.session.user._id}/applications`);
+  } else { 
+  res.render("index.ejs");   
+  }
 });
 
 
 app.use("/auth", authController);
 //essentially a whole lot of routes (passing through the other file)
 app.use(isSignedIn); // middleware
-app.use('/users/:userId/applications', applicationsController);
-
+app.use('/users/:userId/applications', authApplicationsController);
+ //VSCode suggested change 'applicationsController' to 'authApplicationsController' and that worked
 
 
 
